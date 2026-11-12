@@ -15,10 +15,10 @@ backend/finalsay-test-*/
 
 # Node / frontend
 node_modules/
-dist/
 dev-dist/
-apps/web/dist/
 apps/web/dev-dist/
+# dist is committed for GitHub Pages deployment
+# apps/web/dist/
 
 # Foundry compiler and test output
 contracts/out/

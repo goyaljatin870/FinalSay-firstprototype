@@ -6,7 +6,7 @@ on:
       - master
       - main
     paths:
-      - 'apps/web/**'
+      - 'apps/web/dist/**'
       - '.github/workflows/deploy-pages.yml'
   workflow_dispatch:
 
@@ -20,44 +20,21 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build:
-    name: Build React PWA
+  deploy:
+    name: Deploy to GitHub Pages
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: 'npm'
-          cache-dependency-path: 'apps/web/package-lock.json'
-
-      - name: Install dependencies
-        working-directory: apps/web
-        run: npm ci --no-fund --no-audit
-
-      - name: Build frontend
-        working-directory: apps/web
-        env:
-          VITE_API_URL: http://3.230.123.9:8000/api
-          VITE_BASE_URL: /FinalSay-firstprototype/
-        run: npm run build
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: apps/web/dist
 
-  deploy:
-    name: Deploy to GitHub Pages
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
